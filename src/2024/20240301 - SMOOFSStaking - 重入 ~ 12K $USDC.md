@@ -1,0 +1,39 @@
+# 20240301 - SMOOFSStaking - 重入 ~ 12K $USDC
+
+## 相关地址
+
+攻击者地址：0x149b268b8b8101e2b5df84a601327484cb43221c
+
+攻击合约地址：0xe7a7a29fa1a60b3357180b608dbf701d7e0cdf9e
+
+漏洞合约地址：0x9d6cb01fb91f8c6616e822cf90a4b3d8eb0569c6
+
+攻击交易地址：0xcc3d1a2c1dfc572a2937644dab8f1255796e9757ce5def7cc89ead6c2746945e
+
+## 攻击分析
+
+![image.png](../../img/20240301 - SMOOFSStaking - 重入 ~ 12K $USDC/1709253277077-72142846-6c76-494e-a67c-dd74e28dbdd4.png)
+
+攻击者通过闪电贷购入部分 MOOVE
+
+![img](../../img/20240301 - SMOOFSStaking - 重入 ~ 12K $USDC/1709253465635-feecfda3-3346-4e1e-9abc-b40910e1a4da.png)
+
+接着将之前提前转入的 NFT 和 500 MOOVE 质押进合约
+
+![img](../../img/20240301 - SMOOFSStaking - 重入 ~ 12K $USDC/1709253507902-7658e96e-b545-4a91-8c25-3840b80ddc40.png)
+
+质押结束时会退回刚刚质押的等值的 Token 和 NFT
+
+![img](../../img/20240301 - SMOOFSStaking - 重入 ~ 12K $USDC/1709253562818-b6c2a3d2-6150-4553-968e-cbe13bf2854f.png)
+
+其中取出过程中包含一笔 150 MOOVE 的手续费
+
+![img](../../img/20240301 - SMOOFSStaking - 重入 ~ 12K $USDC/1709258822030-8e379f54-9fd7-4037-a85a-382212a7e2cf.png)
+
+Withdraw 函数中包含一个重入漏洞
+
+![img](../../img/20240301 - SMOOFSStaking - 重入 ~ 12K $USDC/1709258888434-621b8312-161d-4a40-8dc7-17f533d70dcc.png)
+
+这里控制权交给攻击合约后，攻击者通过直接将 NFT 发送到质押合约中跳过 500 MOOVE 的质押，此时攻击者只需要提交 150 MOOVE 手续费就可以通过重入获得解除质押的 500 MOOVE
+
+![img](../../img/20240301 - SMOOFSStaking - 重入 ~ 12K $USDC/1709259043268-0279dba5-bf69-4116-82bc-3523cb51987d.png)
